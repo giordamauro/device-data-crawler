@@ -23,8 +23,8 @@ public class DeviceModel {
     @Column(nullable = false)
     private final String model;
 
-    @Column(nullable = false)
-    private final String modelAlias;
+    @Column
+    private String modelAlias;
 
     @Column(nullable = false)
     private final Date extractionDate;
@@ -40,22 +40,19 @@ public class DeviceModel {
         this.uuid = null;
         this.brandName = null;
         this.model = null;
-        this.modelAlias = null;
         this.extractionDate = null;
     }
 
-    public DeviceModel(String brandName, String model, String modelAlias) {
+    public DeviceModel(String brandName, String model) {
 
         Objects.requireNonNull(brandName);
         Objects.requireNonNull(model);
-        Objects.requireNonNull(modelAlias);
 
         this.uuid = UUID.randomUUID();
         this.extractionDate = new Date();
         
         this.brandName = brandName;
         this.model = model;
-        this.modelAlias = modelAlias;
     }
 
     public UUID getUuid() {
@@ -76,6 +73,10 @@ public class DeviceModel {
 
     public String getExtractionVersion() {
         return extractionVersion;
+    }
+    
+    public void setModelAlias(String modelAlias) {
+        this.modelAlias = modelAlias;
     }
 
     public void setExtractionVersion(String extractionVersion) {
