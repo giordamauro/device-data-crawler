@@ -6,22 +6,22 @@ import java.util.stream.Collectors;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
-import org.unicen.ddcrawler.dspecifications.domain.DeviceFeature;
+import org.unicen.ddcrawler.dspecifications.domain.SpecificationFeature;
 import org.unicen.ddcrawler.model.WebCrawler;
 import org.unicen.ddcrawler.util.JsoupWebCrawler;
 
 @Component
-public class ModelDataWebCrawler implements WebCrawler<Set<DeviceFeature>>{
+public class ModelDataWebCrawler implements WebCrawler<Set<SpecificationFeature>>{
     
     @Override
-    public Set<DeviceFeature> extractDataFrom(String url) {
+    public Set<SpecificationFeature> extractDataFrom(String url) {
 
         Elements sectionHeaders = new JsoupWebCrawler(url).select(".section-header > h2");
         
         return sectionHeaders.parallelStream()
             .map(headerElement -> {
              
-                DeviceFeature deviceFeature = new DeviceFeature(headerElement.text());
+                SpecificationFeature deviceFeature = new SpecificationFeature(headerElement.text());
                 
                 Element table = headerElement.parent().nextElementSibling();
                 Elements tableRows = table.select("tbody > tr");

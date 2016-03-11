@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class DeviceFeature {
+public class SpecificationFeature {
 
     private final String featureName;
     
     private final Map<String, String> attributes = new HashMap<>();
     
-    public DeviceFeature(String featureName){
+    public SpecificationFeature(String featureName){
         
         Objects.requireNonNull(featureName);
         
@@ -31,6 +31,6 @@ public class DeviceFeature {
 
     @Override
     public String toString() {
-        return "DeviceFeature [featureName=" + featureName + ", attributes=" + attributes + "]";
+        return "SpecificationFeature [featureName=" + featureName + ", attributes=" + attributes + "]";
     }
 }

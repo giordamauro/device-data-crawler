@@ -2,6 +2,7 @@ package org.unicen.ddcrawler.domain;
 
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -67,12 +68,12 @@ public class DeviceModel {
         return model;
     }
 
-    public String getModelAlias() {
-        return modelAlias;
+    public Optional<String> getModelAlias() {
+        return Optional.ofNullable(modelAlias);
     }
 
-    public String getExtractionVersion() {
-        return extractionVersion;
+    public Optional<String> getExtractionVersion() {
+        return Optional.ofNullable(extractionVersion);
     }
     
     public void setModelAlias(String modelAlias) {
