@@ -19,7 +19,7 @@ public class DeviceDataCrawlerApplication {
 	public static void main(String[] args) throws Exception {
 	    
 	    ConfigurableApplicationContext appContext = SpringApplication.run(DeviceDataCrawlerApplication.class, args);
-	    CrawlingProcessCommand crawlingProcessCommand = appContext.getBean(CrawlingProcessCommand.class);
+	    ExtractingProcessCommand crawlingProcessCommand = appContext.getBean(ExtractingProcessCommand.class);
 	    
 	    crawlingProcessCommand.run();
 	}

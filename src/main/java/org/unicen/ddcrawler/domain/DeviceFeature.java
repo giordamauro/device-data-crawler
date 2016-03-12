@@ -1,5 +1,6 @@
 package org.unicen.ddcrawler.domain;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -26,20 +27,30 @@ public class DeviceFeature {
     @Column(nullable = false)
     private final String featureName;
 
+    @Column(nullable = false)
+    private final Date createdOn;
+    
+    @Column(nullable = false)
+    private final String createdBy;
+    
     @ElementCollection
     @MapKeyColumn(name = "attribute")
     @Column(name = "value")
     @CollectionTable(name = "featureAttributes", joinColumns = @JoinColumn(name = "featureId") )
     private Map<String, String> attributes;
     
-    public DeviceFeature(DeviceModel model, String featureName) {
+    public DeviceFeature(DeviceModel model, String featureName, String createdBy) {
 
-        Objects.requireNonNull(model);
-        Objects.requireNonNull(featureName);
+        Objects.requireNonNull(model, "DeviceModel cannot be null");
+        Objects.requireNonNull(featureName, "FeatureName cannot be null");
+        Objects.requireNonNull(createdBy, "CreatedBy cannot be null");
         
         this.uuid = UUID.randomUUID();
+        this.createdOn = new Date();
+        
         this.model = model;
         this.featureName = featureName;
+        this.createdBy = createdBy;
     }
 
     public UUID getUuid() {

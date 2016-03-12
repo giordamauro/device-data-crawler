@@ -3,11 +3,14 @@ package org.unicen.ddcrawler.domain;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
 /**
  * 
@@ -19,74 +22,76 @@ public class DeviceModel {
     private final UUID uuid;
 
     @Column(nullable = false)
-    private final String brandName;
+    private final String brand;
 
     @Column(nullable = false)
     private final String model;
 
+    @Column(nullable = false)
+    private final Date createdOn;
+    
+    @Column(nullable = false)
+    private final String createdBy;
+
     @Column
     private String modelAlias;
-
-    @Column(nullable = false)
-    private final Date extractionDate;
     
-    @Column
-    private String extractionVersion;
-
+    @OneToMany
+    @JoinColumn
+    private Set<DeviceFeature> features;
     
-    @SuppressWarnings("unused")
     private DeviceModel() {
         // ORM initialization
         
         this.uuid = null;
-        this.brandName = null;
+        this.brand = null;
         this.model = null;
-        this.extractionDate = null;
+        this.createdOn = null;
+        this.createdBy = null;
     }
 
-    public DeviceModel(String brandName, String model) {
+    private DeviceModel(Builder builder) {
 
-        Objects.requireNonNull(brandName);
-        Objects.requireNonNull(model);
-
-        this.uuid = UUID.randomUUID();
-        this.extractionDate = new Date();
+        Objects.requireNonNull(builder.brand, "Brand cannot be null");
+        Objects.requireNonNull(builder.model, "Model cannot be null");
+        Objects.requireNonNull(builder.createdBy, "CreatedBy cannot be null");
         
-        this.brandName = brandName;
-        this.model = model;
+        this.uuid = UUID.randomUUID();
+        this.createdOn = new Date();
+        
+        this.brand = builder.brand;
+        this.model = builder.model;
+        this.createdBy = builder.createdBy;
+        this.modelAlias = builder.modelAlias;
     }
 
+    public void setModelAlias(String modelAlias) {
+        this.modelAlias = modelAlias;
+    }
+    
+	public void setFeatures(Set<DeviceFeature> features) {
+		this.features = features;
+	}
+    
     public UUID getUuid() {
         return uuid;
     }
 
-    public String getBrandName() {
-        return brandName;
+    public String getBrand() {
+        return brand;
     }
 
     public String getModel() {
         return model;
     }
-
+    
     public Optional<String> getModelAlias() {
         return Optional.ofNullable(modelAlias);
     }
-
-    public Optional<String> getExtractionVersion() {
-        return Optional.ofNullable(extractionVersion);
-    }
     
-    public void setModelAlias(String modelAlias) {
-        this.modelAlias = modelAlias;
-    }
-
-    public void setExtractionVersion(String extractionVersion) {
-        this.extractionVersion = extractionVersion;
-    }
-
-    public Date getExtractionDate() {
-        return extractionDate;
-    }
+    public Optional<Set<DeviceFeature>> getFeatures() {
+		return Optional.ofNullable(features);
+	}
     
     @Override
     public int hashCode() {
@@ -112,10 +117,46 @@ public class DeviceModel {
             return false;
         return true;
     }
+    
+	public static class Builder {
+    	
+    	private String brand;
+        private String model;
+        private String createdBy;
+        private String modelAlias;
 
-    @Override
-    public String toString() {
-        return "DeviceModel [uuid=" + uuid + ", brandName=" + brandName + ", model=" + model + ", modelAlias=" + modelAlias + ", extractionDate=" + extractionDate + ", extractionVersion="
-                + extractionVersion + "]";
+		public Builder setBrand(String brand) {
+			
+			Objects.requireNonNull(brand);
+			this.brand = brand;
+
+			return this;
+		}
+
+		public Builder setModel(String model) {
+			
+			Objects.requireNonNull(model);
+			this.model = model;
+
+			return this;
+		}
+
+		public Builder setCreatedBy(String createdBy) {
+			
+			Objects.requireNonNull(createdBy);
+			this.createdBy = createdBy;
+			
+			return this;
+		}
+
+		public Builder setModelAlias(String modelAlias) {
+			this.modelAlias = modelAlias;
+			
+			return this;
+		}
+    	
+		public DeviceModel build() {
+			return new DeviceModel(this);
+		}
     }
 }
