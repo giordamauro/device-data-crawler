@@ -6,8 +6,11 @@ urls:
 #Database properties
 
 spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
   datasource:
-    url: jdbc:mysql://localhost:3306/test
+    url: jdbc:mysql://localhost:3306/device-crawler-dev
     username: root
     password: mysql
     driverClassName: com.mysql.jdbc.Driver

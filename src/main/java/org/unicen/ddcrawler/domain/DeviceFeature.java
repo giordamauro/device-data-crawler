@@ -18,11 +18,8 @@ import javax.persistence.MapKeyColumn;
 public class DeviceFeature {
 
     @Id
+    @Column(columnDefinition = "BINARY(16)")
     private final UUID uuid;
-
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private final DeviceModel model;
 
     @Column(nullable = false)
     private final String featureName;
@@ -32,6 +29,10 @@ public class DeviceFeature {
     
     @Column(nullable = false)
     private final String createdBy;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private DeviceModel model;
     
     @ElementCollection
     @MapKeyColumn(name = "attribute")
@@ -74,7 +75,12 @@ public class DeviceFeature {
     public void setAttributes(Map<String, String> attributes) {
         this.attributes = attributes;
     }
-
+    
+    public void setModel(DeviceModel model) {
+       
+    	Objects.requireNonNull(model, "DeviceModel cannot be null");
+        this.model = model;
+    }
     
     public String getFeatureName() {
         return featureName;
@@ -88,8 +94,8 @@ public class DeviceFeature {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
 		result = prime * result + ((featureName == null) ? 0 : featureName.hashCode());
-		result = prime * result + ((model == null) ? 0 : model.hashCode());
 		return result;
 	}
 
@@ -102,15 +108,15 @@ public class DeviceFeature {
 		if (getClass() != obj.getClass())
 			return false;
 		DeviceFeature other = (DeviceFeature) obj;
+		if (attributes == null) {
+			if (other.attributes != null)
+				return false;
+		} else if (!attributes.equals(other.attributes))
+			return false;
 		if (featureName == null) {
 			if (other.featureName != null)
 				return false;
 		} else if (!featureName.equals(other.featureName))
-			return false;
-		if (model == null) {
-			if (other.model != null)
-				return false;
-		} else if (!model.equals(other.model))
 			return false;
 		return true;
 	}

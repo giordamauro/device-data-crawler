@@ -1,12 +1,12 @@
 package org.unicen.ddcrawler.domain;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 public class DeviceModel {
 
     @Id
+    @Column(columnDefinition = "BINARY(16)")
     private final UUID uuid;
 
     @Column(nullable = false)
@@ -37,7 +38,7 @@ public class DeviceModel {
     @Column
     private String modelAlias;
     
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany
     @JoinColumn
     private Set<DeviceFeature> features;
     
@@ -72,6 +73,15 @@ public class DeviceModel {
     
 	public void setFeatures(Set<DeviceFeature> features) {
 		this.features = features;
+	}
+	
+	public void addFeatures(Set<DeviceFeature> features) {
+		
+		Set<DeviceFeature> deviceFeatures = getFeatures().orElseGet(() -> {
+			this.features = new HashSet<>();
+			return features;
+		});
+		deviceFeatures.addAll(features);
 	}
     
     public UUID getUuid() {
