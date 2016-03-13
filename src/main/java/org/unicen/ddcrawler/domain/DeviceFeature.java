@@ -39,6 +39,16 @@ public class DeviceFeature {
     @CollectionTable(name = "featureAttributes", joinColumns = @JoinColumn(name = "featureId") )
     private Map<String, String> attributes;
     
+    @SuppressWarnings("unused")
+	private DeviceFeature() {
+    
+    	this.uuid = null;
+    	this.model = null;
+    	this.featureName = null;
+    	this.createdOn = null;
+    	this.createdBy = null;
+    }
+    
     public DeviceFeature(DeviceModel model, String featureName, String createdBy) {
 
         Objects.requireNonNull(model, "DeviceModel cannot be null");
@@ -74,33 +84,40 @@ public class DeviceFeature {
         return attributes;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((featureName == null) ? 0 : featureName.hashCode());
+		result = prime * result + ((model == null) ? 0 : model.hashCode());
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        DeviceFeature other = (DeviceFeature) obj;
-        if (uuid == null) {
-            if (other.uuid != null)
-                return false;
-        } else if (!uuid.equals(other.uuid))
-            return false;
-        return true;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DeviceFeature other = (DeviceFeature) obj;
+		if (featureName == null) {
+			if (other.featureName != null)
+				return false;
+		} else if (!featureName.equals(other.featureName))
+			return false;
+		if (model == null) {
+			if (other.model != null)
+				return false;
+		} else if (!model.equals(other.model))
+			return false;
+		return true;
+	}
 
-    @Override
-    public String toString() {
-        return "DeviceFeature [uuid=" + uuid + ", model=" + model + ", featureName=" + featureName + ", attributes=" + attributes + "]";
-    }
+	@Override
+	public String toString() {
+		return "DeviceFeature [uuid=" + uuid + ", featureName=" + featureName + ", createdOn=" + createdOn
+				+ ", createdBy=" + createdBy + ", attributes=" + attributes + "]";
+	}
 }
