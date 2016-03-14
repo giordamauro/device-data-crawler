@@ -15,7 +15,7 @@ spring:
       ddl-auto: create
 
   datasource:
-    url: jdbc:mysql://localhost:3306/device-crawler-dev
+    url: jdbc:mysql://localhost:3306/device-crawler-dev?useSSL=false
     username: root
     password: mysql
     driverClassName: com.mysql.jdbc.Driver
@@ -23,5 +23,5 @@ spring:
 
 logging:
   level: INFO
-  file: ${java.io.tmpdir}/${spring.application.name}.log
+  file: ${user.home}/${spring.application.name}.log
     
