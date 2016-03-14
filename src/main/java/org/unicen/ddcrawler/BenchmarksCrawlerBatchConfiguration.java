@@ -19,11 +19,14 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.unicen.ddcrawler.dspecifications.DSpecificationsUrlReader;
+import org.unicen.ddcrawler.abenchmark.BenchmarkFeaturesProcessor;
+import org.unicen.ddcrawler.abenchmark.BenchmarkUrl;
+import org.unicen.ddcrawler.abenchmark.BenchmarkUrlsReader;
+import org.unicen.ddcrawler.domain.DeviceData;
 
-//@Configuration
-//@EnableBatchProcessing
-public class UrlCrawlerBatchConfiguration {
+@Configuration
+@EnableBatchProcessing
+public class BenchmarksCrawlerBatchConfiguration {
 
     @Autowired
     public JobBuilderFactory jobBuilderFactory;
@@ -33,35 +36,40 @@ public class UrlCrawlerBatchConfiguration {
 
     
     @Autowired
-	private DSpecificationsUrlReader specificationsUrlReader;
+	private BenchmarkUrlsReader benchmarkUrlsReader;
     
-    private static final Set<String> deviceModelUrls = new HashSet<>();
+    @Autowired
+    private BenchmarkFeaturesProcessor benchmarkFeaturesProcessor;
+    
+    private static final Set<DeviceData> deviceDatas = new HashSet<>();
     
     @Bean
-    public ItemWriter<String> modelUrlWriter() {
-        return new ItemWriter<String>(){
+    public ItemWriter<Set<DeviceData>> deviceDatalWriter() {
+        return new ItemWriter<Set<DeviceData>>(){
 
 			@Override
-			public void write(List<? extends String> items) throws Exception {
-				deviceModelUrls.addAll(items);
+			public void write(List<? extends Set<DeviceData>> items) throws Exception {
+			    
+			    items.forEach(devicesData -> deviceDatas.addAll(devicesData));
 			}};
     }
     
     @Bean
-    public Step findModelUrlsStep() {
-        return stepBuilderFactory.get("findModelUrlStep")
-                .<String, String> chunk(10)
-                .reader(specificationsUrlReader)
-                .writer(modelUrlWriter())
+    public Step findBenchmarkFeaturesStep() {
+        return stepBuilderFactory.get("findBenchmarkFeaturesStep")
+                .<BenchmarkUrl, Set<DeviceData>> chunk(1)
+                .reader(benchmarkUrlsReader)
+                .processor(benchmarkFeaturesProcessor)
+                .writer(deviceDatalWriter())
                 .build();
     }
 
     @Bean
-    public Job extractDeviceUrlJob() {
-        return jobBuilderFactory.get("extractDeviceUrl")
+    public Job extractBenchmarkFeaturesJob() {
+        return jobBuilderFactory.get("extractBenchmarkFeaturesJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener())
-                .flow(findModelUrlsStep())
+                .flow(findBenchmarkFeaturesStep())
                 .end()
                 .build();
     }
@@ -77,7 +85,7 @@ public class UrlCrawlerBatchConfiguration {
     	public void afterJob(JobExecution jobExecution) {
     		if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
     		
-    			System.out.println("!!! JOB FINISHED! Total urls: " + deviceModelUrls.size());
+    			System.out.println("!!! JOB FINISHED! Total urls: " + deviceDatas);
     		}
     	}
     }

@@ -20,7 +20,7 @@ public class DSpecificationsUrlReader implements ItemReader<String> {
 	private Iterator<String> nextModel;
 	
 	@Autowired
-	public DSpecificationsUrlReader(@Value("${urls.deviceSpecifications}") String deviceSpecificationsUrl, BrandUrlsWebCrawler brandsWebCrawler, ModelUrlsWebCrawler modelsWebCrawler) {
+	public DSpecificationsUrlReader(@Value("${deviceSpecifications.url}") String deviceSpecificationsUrl, BrandUrlsWebCrawler brandsWebCrawler, ModelUrlsWebCrawler modelsWebCrawler) {
 		
 		this.modelsWebCrawler = modelsWebCrawler;
 		

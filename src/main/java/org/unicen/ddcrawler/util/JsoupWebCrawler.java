@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,17 @@ public class JsoupWebCrawler {
         return elements.stream()
         	.filter(predicate)
         	.collect(Collectors.toList());
+    }
+    
+    public <T> List<T> select(String selector, Function<Element, T> function) {
+        
+        Objects.requireNonNull(selector, "Selector cannot be null");
+        Objects.requireNonNull(function, "Gunction cannot be null");
+
+        Elements elements = doc.select(selector);
+        return elements.stream()
+            .map(element -> function.apply(element))
+            .collect(Collectors.toList());       
     }
 
     public Optional<Element> selectOne(String selector) {

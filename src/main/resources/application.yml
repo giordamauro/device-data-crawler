@@ -1,8 +1,11 @@
 #Application properties
 
-urls:
-  deviceSpecifications: http://www.devicespecifications.com/en
+deviceSpecifications:
+  url: http://www.devicespecifications.com/en
 
+benchmarks:
+  urls:
+    passMarkRating: http://www.androidbenchmark.net/passmark_chart.html
 
 #Spring properties
 
