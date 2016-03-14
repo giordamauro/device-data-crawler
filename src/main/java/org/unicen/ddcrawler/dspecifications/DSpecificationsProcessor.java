@@ -1,17 +1,20 @@
 package org.unicen.ddcrawler.dspecifications;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.unicen.ddcrawler.domain.DeviceData;
 import org.unicen.ddcrawler.domain.DeviceFeature;
 import org.unicen.ddcrawler.domain.DeviceModel;
 import org.unicen.ddcrawler.dspecifications.domain.SpecificationFeature;
 
-public class SpecFeaturesAdapter {
+@Component
+public class DSpecificationsProcessor implements ItemProcessor<String, DeviceData> {
 
 	private static final String CREATED_BY_DEFAULT_VERSION = "devicespecifications.com-1.0";
 	
@@ -20,30 +23,26 @@ public class SpecFeaturesAdapter {
 	private static final String MODEL_ATTRIBUTE = "Model";
 	private static final String MODEL_ALIAS_ATTRIBUTE = "Model alias";
 
-	private final DeviceModel model;
-	private final Set<DeviceFeature> features;
+	@Autowired
+	private ModelDataWebCrawler modelDataWebCrawler;
 
 	private String createdByVersion = CREATED_BY_DEFAULT_VERSION;
 	
-	public SpecFeaturesAdapter(Set<SpecificationFeature> specificationFeatures) {
+	@Override
+	public DeviceData process(String modelUrl) throws Exception {
 
-		Objects.requireNonNull(specificationFeatures, "SpecificationFeatures cannot be null");
-
+		Set<SpecificationFeature> specificationFeatures = modelDataWebCrawler.extractDataFrom(modelUrl);
 		SpecificationFeature modelFeature = findModelFeature(specificationFeatures);
 		
 		Set<SpecificationFeature> modifiableFeaturesSet = new HashSet<>(specificationFeatures);
 		modifiableFeaturesSet.remove(modelFeature);
 
-		this.model = mapFeatureToDeviceModel(modelFeature);
-		this.features = mapSpecificationsToDeviceFeatures(modifiableFeaturesSet, model);
-	}
-
-	public DeviceModel getModel() {
-		return model;
-	}
-
-	public Set<DeviceFeature> getFeatures() {
-		return Collections.unmodifiableSet(features);
+		DeviceModel model = mapFeatureToDeviceModel(modelFeature);
+		Set<DeviceFeature> features = mapSpecificationsToDeviceFeatures(modifiableFeaturesSet, model);
+		
+		DeviceData deviceData = new DeviceData(model, features);
+		
+		return deviceData;
 	}
 	
 	public String getCreatedByVersion() {

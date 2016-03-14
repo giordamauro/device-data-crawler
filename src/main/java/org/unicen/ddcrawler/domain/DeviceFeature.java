@@ -36,7 +36,7 @@ public class DeviceFeature {
     
     @ElementCollection
     @MapKeyColumn(name = "attribute")
-    @Column(name = "value")
+    @Column(name = "value", columnDefinition = "varchar(1000)")
     @CollectionTable(name = "featureAttributes", joinColumns = @JoinColumn(name = "featureId") )
     private Map<String, String> attributes;
     
