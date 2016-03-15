@@ -5,7 +5,12 @@ deviceSpecifications:
 
 benchmarks:
   urls:
-    passMarkRating: http://www.androidbenchmark.net/passmark_chart.html
+    passRating: http://www.androidbenchmark.net/passmark_chart.html
+    CPURating: http://www.androidbenchmark.net/cpumark_chart.html
+    memoryRating: http://www.androidbenchmark.net/memmark_chart.html
+    diskRating: http://www.androidbenchmark.net/diskmark_chart.html
+    2DGraphicsRating: http://www.androidbenchmark.net/g2dmark_chart.html
+    3DGraphicsRating: http://www.androidbenchmark.net/g3dmark_chart.html
 
 #Spring properties
 
