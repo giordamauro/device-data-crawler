@@ -33,3 +33,4 @@ logging:
   level: INFO
   file: ${user.home}/${spring.application.name}.log
     
+    
