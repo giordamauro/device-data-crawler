@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,8 @@ import org.unicen.ddcrawler.dspecifications.domain.SpecificationFeature;
 @Component
 public class DSpecificationsProcessor implements ItemProcessor<String, DeviceData> {
 
+    private static final Log LOGGER = LogFactory.getLog(DSpecificationsProcessor.class);
+    
 	private static final String CREATED_BY_DEFAULT_VERSION = "devicespecifications.com-1.0";
 	
 	private static final String BRAND_AND_MODEL_FEATURE = "Brand and model";
@@ -30,19 +34,21 @@ public class DSpecificationsProcessor implements ItemProcessor<String, DeviceDat
 	
 	@Override
 	public DeviceData process(String modelUrl) throws Exception {
+	    
+	    LOGGER.info("Start processing DS model url " + modelUrl);
+	    
+	    Set<SpecificationFeature> specificationFeatures = modelDataWebCrawler.extractDataFrom(modelUrl);
+        SpecificationFeature modelFeature = findModelFeature(specificationFeatures);
+        
+        Set<SpecificationFeature> modifiableFeaturesSet = new HashSet<>(specificationFeatures);
+        modifiableFeaturesSet.remove(modelFeature);
 
-		Set<SpecificationFeature> specificationFeatures = modelDataWebCrawler.extractDataFrom(modelUrl);
-		SpecificationFeature modelFeature = findModelFeature(specificationFeatures);
-		
-		Set<SpecificationFeature> modifiableFeaturesSet = new HashSet<>(specificationFeatures);
-		modifiableFeaturesSet.remove(modelFeature);
-
-		DeviceModel model = mapFeatureToDeviceModel(modelFeature);
-		Set<DeviceFeature> features = mapSpecificationsToDeviceFeatures(modifiableFeaturesSet, model);
-		
-		DeviceData deviceData = new DeviceData(model, features);
-		
-		return deviceData;
+        DeviceModel model = mapFeatureToDeviceModel(modelFeature);
+        Set<DeviceFeature> features = mapSpecificationsToDeviceFeatures(modifiableFeaturesSet, model);
+        
+        DeviceData deviceData = new DeviceData(model, features);
+        
+        return deviceData;
 	}
 	
 	public String getCreatedByVersion() {

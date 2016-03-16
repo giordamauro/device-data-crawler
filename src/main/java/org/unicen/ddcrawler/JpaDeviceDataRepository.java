@@ -17,7 +17,7 @@ import org.unicen.ddcrawler.repository.DeviceFeatureRepository;
 import org.unicen.ddcrawler.repository.DeviceModelRepository;
 
 @Component
-public class JpaDeviceDataRepository implements ItemWriter<DeviceData>{
+public class JpaDeviceDataRepository implements ItemWriter<DeviceData> {
 
 	private static final Log LOGGER = LogFactory.getLog(JpaDeviceDataRepository.class);
 	
@@ -50,6 +50,11 @@ public class JpaDeviceDataRepository implements ItemWriter<DeviceData>{
 	private void storeDeviceData(DeviceModel model, Optional<Set<DeviceFeature>> features) {
 
 		DeviceModel deviceModel = deviceModelRepository.findOneByBrandAndModel(model.getBrand(), model.getModel())
+		        .map(existingDevice -> {
+		            
+		            LOGGER.info("Found existing device matching with " + model);
+		            return existingDevice;
+		        })
 				.orElse(deviceModelRepository.save(model));
 		
 		features.ifPresent(modelFeatures -> {
