@@ -1,6 +1,7 @@
 package org.unicen.ddcrawler;
 
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -64,7 +65,7 @@ public class CrawlerBatchConfiguration {
                 .reader(specificationsUrlReader)
                 .processor(specificationsDataProcessor)
                 .writer(jpaDeviceDataRepository)
-                .faultTolerant()
+                .faultTolerant().retry(SocketTimeoutException.class)
                 .listener(new LogSkipListener())
                 .build();
     }
@@ -76,7 +77,7 @@ public class CrawlerBatchConfiguration {
                 .reader(benchmarkUrlsReader)
                 .processor(benchmarkFeaturesProcessor)
                 .writer(new SetJpaDeviceDataRepository(jpaDeviceDataRepository))
-                .faultTolerant()
+                .faultTolerant().retry(SocketTimeoutException.class)
                 .listener(new LogSkipListener())
                 .build();
     }
@@ -87,7 +88,7 @@ public class CrawlerBatchConfiguration {
                 .incrementer(new RunIdIncrementer())
                 .listener(new JobCompletionNotificationListener())
                 .flow(storeModelSpecificationsStep())
-                .next(storeModelBenchmarksStep())
+//                .next(storeModelBenchmarksStep())
                 .end()
                 .build();
     }

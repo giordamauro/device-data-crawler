@@ -21,11 +21,13 @@ public class DSpecificationsProcessor implements ItemProcessor<String, DeviceDat
     private static final Log LOGGER = LogFactory.getLog(DSpecificationsProcessor.class);
     
 	private static final String CREATED_BY_DEFAULT_VERSION = "devicespecifications.com-1.0";
+	private static final int MAX_RETRIES = 3;
 	
 	private static final String BRAND_AND_MODEL_FEATURE = "Brand and model";
 	private static final String BRAND_ATTRIBUTE = "Brand";
 	private static final String MODEL_ATTRIBUTE = "Model";
 	private static final String MODEL_ALIAS_ATTRIBUTE = "Model alias";
+
 
 	@Autowired
 	private ModelDataWebCrawler modelDataWebCrawler;
@@ -37,8 +39,8 @@ public class DSpecificationsProcessor implements ItemProcessor<String, DeviceDat
 	    
 	    LOGGER.info("Start processing DS model url " + modelUrl);
 	    
-	    Set<SpecificationFeature> specificationFeatures = modelDataWebCrawler.extractDataFrom(modelUrl);
-        SpecificationFeature modelFeature = findModelFeature(specificationFeatures);
+	    Set<SpecificationFeature> specificationFeatures = getSpecificationFeatures(modelUrl);
+	    SpecificationFeature modelFeature = findModelFeature(specificationFeatures);
         
         Set<SpecificationFeature> modifiableFeaturesSet = new HashSet<>(specificationFeatures);
         modifiableFeaturesSet.remove(modelFeature);
@@ -57,6 +59,28 @@ public class DSpecificationsProcessor implements ItemProcessor<String, DeviceDat
 
 	public void setCreatedByVersion(String createdByVersion) {
 		this.createdByVersion = createdByVersion;
+	}
+	
+	private Set<SpecificationFeature> getSpecificationFeatures(String modelUrl) {
+		
+		Set<SpecificationFeature> specificationFeatures = null;
+	    
+	    int retries = 0;
+	    while(specificationFeatures == null && retries < MAX_RETRIES){
+		    try {
+		    	specificationFeatures = modelDataWebCrawler.extractDataFrom(modelUrl);
+		    }
+		    catch(Exception e){
+		    	LOGGER.error("Exception processing url " + modelUrl, e);
+		    	retries++;
+		    }
+	    }
+	    
+	    if(specificationFeatures == null){
+	    	throw new IllegalStateException(String.format("FAIL - Completed %s retries for url %s", retries, modelUrl));
+	    }
+	    
+	    return specificationFeatures;
 	}
 
 	private SpecificationFeature findModelFeature(Set<SpecificationFeature> specificationFeatures) {
