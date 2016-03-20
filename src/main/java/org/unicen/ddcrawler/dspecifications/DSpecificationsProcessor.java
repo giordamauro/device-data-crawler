@@ -3,20 +3,18 @@ package org.unicen.ddcrawler.dspecifications;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.unicen.ddcrawler.domain.DeviceData;
 import org.unicen.ddcrawler.domain.DeviceFeature;
 import org.unicen.ddcrawler.domain.DeviceModel;
 import org.unicen.ddcrawler.dspecifications.domain.SpecificationFeature;
 
 @Component
-public class DSpecificationsProcessor implements ItemProcessor<String, DeviceData> {
+public class DSpecificationsProcessor implements ItemProcessor<String, DeviceModel> {
 
     private static final Log LOGGER = LogFactory.getLog(DSpecificationsProcessor.class);
     
@@ -28,6 +26,9 @@ public class DSpecificationsProcessor implements ItemProcessor<String, DeviceDat
 	private static final String MODEL_ATTRIBUTE = "Model";
 	private static final String MODEL_ALIAS_ATTRIBUTE = "Model alias";
 
+	private static final String RECENT_COMPARISONS_CATEGORY = "Most recent comparisons";
+	private static final String PRICES_CATEGORY = "Prices of";
+
 
 	@Autowired
 	private ModelDataWebCrawler modelDataWebCrawler;
@@ -35,7 +36,7 @@ public class DSpecificationsProcessor implements ItemProcessor<String, DeviceDat
 	private String createdByVersion = CREATED_BY_DEFAULT_VERSION;
 	
 	@Override
-	public DeviceData process(String modelUrl) throws Exception {
+	public DeviceModel process(String modelUrl) throws Exception {
 	    
 	    LOGGER.info("Start processing DS model url " + modelUrl);
 	    
@@ -46,11 +47,11 @@ public class DSpecificationsProcessor implements ItemProcessor<String, DeviceDat
         modifiableFeaturesSet.remove(modelFeature);
 
         DeviceModel model = mapFeatureToDeviceModel(modelFeature);
-        Set<DeviceFeature> features = mapSpecificationsToDeviceFeatures(modifiableFeaturesSet, model);
+        Set<DeviceFeature> features = mapSpecificationsToDeviceFeatures(modifiableFeaturesSet);
         
-        DeviceData deviceData = new DeviceData(model, features);
+        model.addFeatures(features);
         
-        return deviceData;
+        return model;
 	}
 	
 	public String getCreatedByVersion() {
@@ -107,18 +108,25 @@ public class DSpecificationsProcessor implements ItemProcessor<String, DeviceDat
 		return deviceModel;
 	}
 	
-	private Set<DeviceFeature> mapSpecificationsToDeviceFeatures(Set<SpecificationFeature> specificationFeatures, DeviceModel model) {
-		
-		 Set<DeviceFeature> deviceFeatures = specificationFeatures.parallelStream()
-			.map(specFeature -> {
+	private Set<DeviceFeature> mapSpecificationsToDeviceFeatures(Set<SpecificationFeature> specificationFeatures) {
+
+		Set<DeviceFeature> deviceFeatures = new HashSet<>();
+
+		specificationFeatures.forEach(specFeature -> {
+
+			String category = specFeature.getFeatureName();
+			if(!category.startsWith(RECENT_COMPARISONS_CATEGORY) && !category.startsWith(PRICES_CATEGORY)){
+	
+				specFeature.getAttributes().forEach( (name, value) -> {
 				
-				DeviceFeature feature = new DeviceFeature(model, specFeature.getFeatureName(), createdByVersion);
-				feature.setAttributes(specFeature.getAttributes());
+					DeviceFeature feature = new DeviceFeature(specFeature.getFeatureName(), name, value);
+					feature.setCreatedBy(createdByVersion);
 				
-				return feature;
-			})
-			.collect(Collectors.toSet());
-		 
-		 return deviceFeatures;
+					deviceFeatures.add(feature);
+				});
+			}
+		});
+
+		return deviceFeatures;
 	}
 }

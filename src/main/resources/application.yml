@@ -19,14 +19,19 @@ spring:
     name: device-data-crawler
 
   jpa:
+    database: device-data
+    database-platform: org.unicen.ddcrawler.util.SQLiteDialect
     hibernate:
       ddl-auto: create
 
   datasource:
-    url: jdbc:mysql://localhost:3306/device-crawler-dev?useSSL=false
-    username: root
-    password: mysql
-    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:sqlite:c:/sqlite/device-data.db
+    driverClassName: org.sqlite.JDBC
+
+#    url: jdbc:mysql://localhost:3306/device-crawler-dev?useSSL=false
+#    username: root
+#    password: mysql
+#    driverClassName: com.mysql.jdbc.Driver
 
 
 logging:

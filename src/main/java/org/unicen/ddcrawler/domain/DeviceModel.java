@@ -1,23 +1,31 @@
 package org.unicen.ddcrawler.domain;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  * 
  */
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"brand", "model"})) 
 public class DeviceModel {
 
     @Id
-    @Column(columnDefinition = "BINARY(16)")
-    private final UUID uuid;
+    @GeneratedValue
+    private Integer id;
 
     @Column(nullable = false)
     private final String brand;
@@ -33,11 +41,15 @@ public class DeviceModel {
 
     @Column
     private String modelAlias;
-        
+
+    @JoinColumn
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<DeviceFeature> features;    
+    
     private DeviceModel() {
         // ORM initialization
         
-        this.uuid = null;
+        this.id = null;
         this.brand = null;
         this.model = null;
         this.createdOn = null;
@@ -50,7 +62,6 @@ public class DeviceModel {
         Objects.requireNonNull(builder.model, "Model cannot be null");
         Objects.requireNonNull(builder.createdBy, "CreatedBy cannot be null");
         
-        this.uuid = UUID.randomUUID();
         this.createdOn = new Date();
         
         this.brand = builder.brand;
@@ -62,12 +73,27 @@ public class DeviceModel {
     public void setModelAlias(String modelAlias) {
         this.modelAlias = modelAlias;
     }
-        
-    public UUID getUuid() {
-        return uuid;
-    }
 
-    public String getBrand() {
+    public void addFeatures(Set<DeviceFeature> features) {
+    	
+    	features.forEach(feature -> feature.setModel(this));
+		
+    	if(this.features == null){
+			this.features = new HashSet<>();
+		}
+    	
+    	this.features.addAll(features);
+	}
+    
+	public Integer getId() {
+		return id;
+	}
+
+	public Set<DeviceFeature> getFeatures() {
+		return features;
+	}
+
+	public String getBrand() {
         return brand;
     }
 
@@ -87,35 +113,65 @@ public class DeviceModel {
 		return createdBy;
 	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((brand == null) ? 0 : brand.hashCode());
+		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
+		result = prime * result + ((createdOn == null) ? 0 : createdOn.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((model == null) ? 0 : model.hashCode());
+		result = prime * result + ((modelAlias == null) ? 0 : modelAlias.hashCode());
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        DeviceModel other = (DeviceModel) obj;
-        if (uuid == null) {
-            if (other.uuid != null)
-                return false;
-        } else if (!uuid.equals(other.uuid))
-            return false;
-        return true;
-    }
-    
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DeviceModel other = (DeviceModel) obj;
+		if (brand == null) {
+			if (other.brand != null)
+				return false;
+		} else if (!brand.equals(other.brand))
+			return false;
+		if (createdBy == null) {
+			if (other.createdBy != null)
+				return false;
+		} else if (!createdBy.equals(other.createdBy))
+			return false;
+		if (createdOn == null) {
+			if (other.createdOn != null)
+				return false;
+		} else if (!createdOn.equals(other.createdOn))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (model == null) {
+			if (other.model != null)
+				return false;
+		} else if (!model.equals(other.model))
+			return false;
+		if (modelAlias == null) {
+			if (other.modelAlias != null)
+				return false;
+		} else if (!modelAlias.equals(other.modelAlias))
+			return false;
+		return true;
+	}
+
 	@Override
 	public String toString() {
-		return "DeviceModel [uuid=" + uuid + ", brand=" + brand + ", model=" + model + ", createdOn=" + createdOn
-				+ ", createdBy=" + createdBy + ", modelAlias=" + modelAlias + "]";
+		return "DeviceModel [id=" + id + ", brand=" + brand + ", model=" + model + ", createdOn=" + createdOn
+				+ ", createdBy=" + createdBy + ", modelAlias=" + modelAlias + ", features=" + features + "]";
 	}
 
 	public static class Builder {

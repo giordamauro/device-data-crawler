@@ -8,22 +8,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
-import org.unicen.ddcrawler.domain.DeviceData;
 import org.unicen.ddcrawler.domain.DeviceFeature;
 import org.unicen.ddcrawler.domain.DeviceModel;
 
 @Component
-public class BenchmarkFeaturesProcessor implements ItemProcessor<BenchmarkUrl, Set<DeviceData>> {
+public class BenchmarkFeaturesProcessor implements ItemProcessor<BenchmarkUrl, Set<DeviceModel>> {
 
 	private static final Log LOGGER = LogFactory.getLog(BenchmarkFeaturesProcessor.class);
 	
 	private static final String CREATED_BY_DEFAULT_VERSION = "androidbenchmark.net-1.0";
 	private static final int MAX_RETRIES = 3;
-	
+
+	private static final String BENCHMARK_CATEGORY = "Benchmarks";
+
 	private String createdByVersion = CREATED_BY_DEFAULT_VERSION;
 	
 	@Override
-	public Set<DeviceData> process(BenchmarkUrl benchmarkUrl) throws Exception {
+	public Set<DeviceModel> process(BenchmarkUrl benchmarkUrl) throws Exception {
 
 	    BenchmarkWebCrawler benchmarkWebCrawler = new BenchmarkWebCrawler(benchmarkUrl.getFeatureName());
 	    Set<BenchmarkFeature> benchmarkFeatures = getBenchmarkFeatures(benchmarkWebCrawler, benchmarkUrl.getUrl());
@@ -37,9 +38,10 @@ public class BenchmarkFeaturesProcessor implements ItemProcessor<BenchmarkUrl, S
                             .setCreatedBy(createdByVersion)
                             .build();
             		
-            		DeviceFeature feature =  new DeviceFeature(model, benchmarkFeature.getFeatureName(), benchmarkFeature.getBenchmarkValue());
-
-            		return new DeviceData(model, Collections.singleton(feature));
+            		DeviceFeature feature =  new DeviceFeature(BENCHMARK_CATEGORY, benchmarkFeature.getFeatureName(), benchmarkFeature.getBenchmarkValue());
+            		model.addFeatures(Collections.singleton(feature));
+            		
+            		return model;
 	            })
 	            .collect(Collectors.toSet());
 	}

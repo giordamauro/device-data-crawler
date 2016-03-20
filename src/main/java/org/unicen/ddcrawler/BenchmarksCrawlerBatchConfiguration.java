@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.unicen.ddcrawler.abenchmark.BenchmarkFeaturesProcessor;
 import org.unicen.ddcrawler.abenchmark.BenchmarkUrl;
 import org.unicen.ddcrawler.abenchmark.BenchmarkUrlsReader;
-import org.unicen.ddcrawler.domain.DeviceData;
+import org.unicen.ddcrawler.domain.DeviceModel;
 
 //@Configuration
 //@EnableBatchProcessing
@@ -39,14 +39,14 @@ public class BenchmarksCrawlerBatchConfiguration {
     @Autowired
     private BenchmarkFeaturesProcessor benchmarkFeaturesProcessor;
     
-    private static final Set<DeviceData> deviceDatas = new HashSet<>();
+    private static final Set<DeviceModel> deviceDatas = new HashSet<>();
     
     @Bean
-    public ItemWriter<Set<DeviceData>> deviceDatalWriter() {
-        return new ItemWriter<Set<DeviceData>>(){
+    public ItemWriter<Set<DeviceModel>> deviceDatalWriter() {
+        return new ItemWriter<Set<DeviceModel>>(){
 
 			@Override
-			public void write(List<? extends Set<DeviceData>> items) throws Exception {
+			public void write(List<? extends Set<DeviceModel>> items) throws Exception {
 			    
 			    items.forEach(devicesData -> deviceDatas.addAll(devicesData));
 			}};
@@ -55,7 +55,7 @@ public class BenchmarksCrawlerBatchConfiguration {
     @Bean
     public Step findBenchmarkFeaturesStep() {
         return stepBuilderFactory.get("findBenchmarkFeaturesStep")
-                .<BenchmarkUrl, Set<DeviceData>> chunk(1)
+                .<BenchmarkUrl, Set<DeviceModel>> chunk(1)
                 .reader(benchmarkUrlsReader)
                 .processor(benchmarkFeaturesProcessor)
                 .writer(deviceDatalWriter())

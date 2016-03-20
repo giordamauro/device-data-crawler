@@ -1,101 +1,113 @@
 package org.unicen.ddcrawler.domain;
 
 import java.util.Date;
-import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
 
 @Entity
 public class DeviceFeature {
 
     @Id
-    @Column(columnDefinition = "BINARY(16)")
-    private final UUID uuid;
-
-    @Column(nullable = false)
-    private final String featureName;
-
-    @Column(nullable = false)
-    private final Date createdOn;
-    
-    @Column(nullable = false)
-    private final String createdBy;
+    @GeneratedValue
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private DeviceModel model;
+    private DeviceModel device;
     
-    @ElementCollection
-    @MapKeyColumn(name = "attribute")
-    @Column(name = "value", columnDefinition = "varchar(1000)")
-    @CollectionTable(name = "featureAttributes", joinColumns = @JoinColumn(name = "featureId") )
-    private Map<String, String> attributes;
+    @Column(nullable = false)
+    private final String category;
+
+    @Column(nullable = false)
+    private final String name;
+
+    @Column(nullable = false)
+    private final String value;
+    
+    
+    @Column(nullable = false)
+    private final Date createdOn;
+    
+    @Column
+    private String createdBy;
+
     
     @SuppressWarnings("unused")
 	private DeviceFeature() {
     
-    	this.uuid = null;
-    	this.model = null;
-    	this.featureName = null;
+    	this.category = null;
+    	this.name = null;
+    	this.value = null;
     	this.createdOn = null;
-    	this.createdBy = null;
     }
     
-    public DeviceFeature(DeviceModel model, String featureName, String createdBy) {
+    public DeviceFeature(String category, String name, String value) {
 
-        Objects.requireNonNull(model, "DeviceModel cannot be null");
-        Objects.requireNonNull(featureName, "FeatureName cannot be null");
-        Objects.requireNonNull(createdBy, "CreatedBy cannot be null");
+        Objects.requireNonNull(category, "Category cannot be null");
+        Objects.requireNonNull(name, "Name cannot be null");
+        Objects.requireNonNull(value, "Value cannot be null");
         
-        this.uuid = UUID.randomUUID();
         this.createdOn = new Date();
+        this.category = category;
+        this.name = name;
+        this.value = value;
+    }
+
+    public Integer getId() {
+		return id;
+	}
+
+	public DeviceModel getDevice() {
+		return device;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public Date getCreatedOn() {
+		return createdOn;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setModel(DeviceModel model) {
         
-        this.model = model;
-        this.featureName = featureName;
-        this.createdBy = createdBy;
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public DeviceModel getModel() {
-        return model;
-    }
-
-    public void setAttributes(Map<String, String> attributes) {
-        this.attributes = attributes;
-    }
-    
-    public void setModel(DeviceModel model) {
-       
     	Objects.requireNonNull(model, "DeviceModel cannot be null");
-        this.model = model;
-    }
-    
-    public String getFeatureName() {
-        return featureName;
+        this.device = model;
     }
 
-    public Map<String, String> getAttributes() {
-        return attributes;
-    }
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
-		result = prime * result + ((featureName == null) ? 0 : featureName.hashCode());
+		result = prime * result + ((category == null) ? 0 : category.hashCode());
+		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
+		result = prime * result + ((createdOn == null) ? 0 : createdOn.hashCode());
+		result = prime * result + ((device == null) ? 0 : device.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
 
@@ -108,22 +120,47 @@ public class DeviceFeature {
 		if (getClass() != obj.getClass())
 			return false;
 		DeviceFeature other = (DeviceFeature) obj;
-		if (attributes == null) {
-			if (other.attributes != null)
+		if (category == null) {
+			if (other.category != null)
 				return false;
-		} else if (!attributes.equals(other.attributes))
+		} else if (!category.equals(other.category))
 			return false;
-		if (featureName == null) {
-			if (other.featureName != null)
+		if (createdBy == null) {
+			if (other.createdBy != null)
 				return false;
-		} else if (!featureName.equals(other.featureName))
+		} else if (!createdBy.equals(other.createdBy))
+			return false;
+		if (createdOn == null) {
+			if (other.createdOn != null)
+				return false;
+		} else if (!createdOn.equals(other.createdOn))
+			return false;
+		if (device == null) {
+			if (other.device != null)
+				return false;
+		} else if (!device.equals(other.device))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "DeviceFeature [uuid=" + uuid + ", featureName=" + featureName + ", createdOn=" + createdOn
-				+ ", createdBy=" + createdBy + ", attributes=" + attributes + "]";
+		return "DeviceFeature [id=" + id + ", category=" + category + ", name=" + name + ", value=" + value
+				+ ", createdOn=" + createdOn + ", createdBy=" + createdBy + "]";
 	}
 }
