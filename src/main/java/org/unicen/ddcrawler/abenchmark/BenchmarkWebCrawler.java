@@ -1,8 +1,8 @@
 package org.unicen.ddcrawler.abenchmark;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -24,28 +24,32 @@ public class BenchmarkWebCrawler implements BulkWebCrawler<BenchmarkFeature>{
         Elements modelElements = tableElement.map(table -> table.select("a"))
         			.orElseThrow(() -> new IllegalStateException("Expected chart table on page " + url));
         
-        return modelElements.parallelStream()
-            .map(modelElement -> {
+        Set<BenchmarkFeature> benchmarkFeatures = new HashSet<>();
+        
+		modelElements.forEach(modelElement -> {
 
-                String brandAndModel = modelElement.text();
-                
-                String brandAndModelSplit[] = brandAndModel.split(" ");
-                String brand = brandAndModelSplit[0];
-                String model = brandAndModelSplit[1];
-                        
-                Element tableData = modelElement.parent().nextElementSibling();
-                Element valueDiv = tableData.select("div").get(0);
-    
-                valueDiv.select("span").remove();
-                
-                String benchmarkValue = valueDiv.text();
-                
-                return new BenchmarkFeature.Builder(benchmarkName)
-                        .setBrand(brand)
-                        .setModel(model)
-                        .setBenchmarkValue(benchmarkValue)
-                        .build();
-                
-            }).collect(Collectors.toSet());
+			String brandAndModel = modelElement.text();
+
+			String brandAndModelSplit[] = brandAndModel.split(" ");
+			String brand = brandAndModelSplit[0];
+			String model = brandAndModel.replaceFirst(brand, "");
+
+			Element tableData = modelElement.parent().nextElementSibling();
+			Element valueDiv = tableData.select("div").get(0);
+
+			valueDiv.select("span").remove();
+
+			String benchmarkValue = valueDiv.text();
+
+			BenchmarkFeature benchmarFeature = new BenchmarkFeature.Builder(benchmarkName)
+					.setBrand(brand)
+					.setModel(model)
+					.setBenchmarkValue(benchmarkValue)
+					.build();
+
+			benchmarkFeatures.add(benchmarFeature);
+		});
+		
+		return benchmarkFeatures;
     }
 }

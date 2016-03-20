@@ -9,12 +9,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.unicen.ddcrawler.domain.DeviceDataUrl;
 import org.unicen.ddcrawler.domain.DeviceFeature;
 import org.unicen.ddcrawler.domain.DeviceModel;
 import org.unicen.ddcrawler.dspecifications.domain.SpecificationFeature;
 
 @Component
-public class DSpecificationsProcessor implements ItemProcessor<String, DeviceModel> {
+public class DSpecificationsProcessor implements ItemProcessor<DeviceDataUrl, DeviceModel> {
 
     private static final Log LOGGER = LogFactory.getLog(DSpecificationsProcessor.class);
     
@@ -36,11 +37,11 @@ public class DSpecificationsProcessor implements ItemProcessor<String, DeviceMod
 	private String createdByVersion = CREATED_BY_DEFAULT_VERSION;
 	
 	@Override
-	public DeviceModel process(String modelUrl) throws Exception {
+	public DeviceModel process(DeviceDataUrl modelUrl) throws Exception {
 	    
 	    LOGGER.info("Start processing DS model url " + modelUrl);
 	    
-	    Set<SpecificationFeature> specificationFeatures = getSpecificationFeatures(modelUrl);
+	    Set<SpecificationFeature> specificationFeatures = getSpecificationFeatures(modelUrl.getModelUrl());
 	    SpecificationFeature modelFeature = findModelFeature(specificationFeatures);
         
         Set<SpecificationFeature> modifiableFeaturesSet = new HashSet<>(specificationFeatures);

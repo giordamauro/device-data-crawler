@@ -28,7 +28,7 @@ public class BenchmarkUrlsReader implements ItemReader<BenchmarkUrl> {
 		    
 		    Entry<String, String> benchmarkUrl = urlIterator.next();
 		    
-			return new BenchmarkUrl(benchmarkUrl.getValue(), benchmarkUrl.getKey());
+			return new BenchmarkUrl(benchmarkUrl.getKey(), benchmarkUrl.getValue());
 		}
 
 		return null;

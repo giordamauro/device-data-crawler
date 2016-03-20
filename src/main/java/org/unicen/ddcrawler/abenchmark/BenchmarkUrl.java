@@ -7,10 +7,10 @@ public class BenchmarkUrl {
     private final String featureName;
     private final String url;
 
-    public BenchmarkUrl(String url, String featureName) {
+    public BenchmarkUrl(String featureName, String url) {
         
-        Objects.requireNonNull(url, "Url cannot be null");
         Objects.requireNonNull(featureName, "FeatureName cannot be null");
+        Objects.requireNonNull(url, "Url cannot be null");
         
         this.featureName = featureName;
         this.url = url;

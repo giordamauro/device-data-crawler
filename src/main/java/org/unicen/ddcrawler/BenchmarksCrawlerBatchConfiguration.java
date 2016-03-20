@@ -22,8 +22,8 @@ import org.unicen.ddcrawler.abenchmark.BenchmarkUrl;
 import org.unicen.ddcrawler.abenchmark.BenchmarkUrlsReader;
 import org.unicen.ddcrawler.domain.DeviceModel;
 
-//@Configuration
 //@EnableBatchProcessing
+//@Configuration
 public class BenchmarksCrawlerBatchConfiguration {
 
     @Autowired

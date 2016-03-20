@@ -13,6 +13,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -21,16 +22,18 @@ import org.springframework.batch.core.listener.StepExecutionListenerSupport;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.unicen.ddcrawler.abenchmark.BenchmarkFeaturesProcessor;
 import org.unicen.ddcrawler.abenchmark.BenchmarkUrl;
 import org.unicen.ddcrawler.abenchmark.BenchmarkUrlsReader;
+import org.unicen.ddcrawler.domain.DeviceDataUrl;
 import org.unicen.ddcrawler.domain.DeviceModel;
+import org.unicen.ddcrawler.dspecifications.DSpecificationsModelUrlReader;
 import org.unicen.ddcrawler.dspecifications.DSpecificationsProcessor;
-import org.unicen.ddcrawler.dspecifications.DSpecificationsUrlReader;
 import org.unicen.ddcrawler.writer.JpaDeviceDataRepository;
 
-//@Configuration
 //@EnableBatchProcessing
+//@Configuration
 public class CrawlerBatchConfiguration {
 
     @Autowired
@@ -41,7 +44,7 @@ public class CrawlerBatchConfiguration {
 
     
     @Autowired
-	private DSpecificationsUrlReader specificationsUrlReader;
+	private DSpecificationsModelUrlReader specificationsUrlReader;
     
     @Autowired
 	private DSpecificationsProcessor specificationsDataProcessor;
@@ -60,7 +63,7 @@ public class CrawlerBatchConfiguration {
     @Bean
     public Step storeModelSpecificationsStep() {
         return stepBuilderFactory.get("storeModelSpecificationsStep")
-                .<String, DeviceModel> chunk(10)
+                .<DeviceDataUrl, DeviceModel> chunk(10)
                 .reader(specificationsUrlReader)
                 .processor(specificationsDataProcessor)
                 .writer(jpaDeviceDataRepository)

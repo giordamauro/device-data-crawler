@@ -12,6 +12,13 @@ benchmarks:
     2DGraphicsRating: http://www.androidbenchmark.net/g2dmark_chart.html
     3DGraphicsRating: http://www.androidbenchmark.net/g3dmark_chart.html
 
+deviceProcess:
+  nextId: 1
+
+exportToCSVProcess:
+  nextId: 1
+
+
 #Spring properties
 
 spring:
@@ -22,7 +29,7 @@ spring:
     database: device-data
     database-platform: org.unicen.ddcrawler.util.SQLiteDialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
   datasource:
     url: jdbc:sqlite:c:/sqlite/device-data.db

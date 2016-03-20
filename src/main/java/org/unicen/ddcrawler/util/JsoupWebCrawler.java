@@ -1,6 +1,7 @@
 package org.unicen.ddcrawler.util;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -68,11 +69,11 @@ public class JsoupWebCrawler {
         return doc;
     }
 
-    private Document getDocument(String url) {
+	private Document getDocument(String url) {
 
         try {
-            return Jsoup.connect(url).get();
-
+        	return Jsoup.parse(new URL(url).openStream(), "ISO-8859-1", url);
+            
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

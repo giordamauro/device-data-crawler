@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
  * 
  */
 @Component
-public class DSpecificationsUrlReader implements ItemReader<String> {
+public class DSpecificationsWebUrlReader implements ItemReader<String> {
 
-    private static final Log LOGGER = LogFactory.getLog(DSpecificationsUrlReader.class);
+    private static final Log LOGGER = LogFactory.getLog(DSpecificationsWebUrlReader.class);
     
 	private final ModelUrlsWebCrawler modelsWebCrawler;
 	
@@ -24,7 +24,7 @@ public class DSpecificationsUrlReader implements ItemReader<String> {
 	private Iterator<String> nextModel;
 	
 	@Autowired
-	public DSpecificationsUrlReader(@Value("${deviceSpecifications.url}") String deviceSpecificationsUrl, BrandUrlsWebCrawler brandsWebCrawler, ModelUrlsWebCrawler modelsWebCrawler) {
+	public DSpecificationsWebUrlReader(@Value("${deviceSpecifications.url}") String deviceSpecificationsUrl, BrandUrlsWebCrawler brandsWebCrawler, ModelUrlsWebCrawler modelsWebCrawler) {
 		
 		this.modelsWebCrawler = modelsWebCrawler;
 		

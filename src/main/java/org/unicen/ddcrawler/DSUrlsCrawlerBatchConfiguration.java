@@ -3,20 +3,19 @@ package org.unicen.ddcrawler;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.unicen.ddcrawler.domain.DeviceDataUrl;
-import org.unicen.ddcrawler.dspecifications.DSpecificationsUrlReader;
+import org.unicen.ddcrawler.dspecifications.DSpecificationsWebUrlReader;
 import org.unicen.ddcrawler.writer.JpaDeviceUrlRepository;
 
-@Configuration
-@EnableBatchProcessing
+
+//@Configuration
+//@EnableBatchProcessing
 public class DSUrlsCrawlerBatchConfiguration {
 
     @Autowired
@@ -27,7 +26,7 @@ public class DSUrlsCrawlerBatchConfiguration {
 
     
     @Autowired
-	private DSpecificationsUrlReader specificationsUrlReader;
+	private DSpecificationsWebUrlReader specificationsUrlReader;
     
     @Autowired
     private JpaDeviceUrlRepository jpaDeviceDataRepository;

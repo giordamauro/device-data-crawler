@@ -18,6 +18,13 @@ public class DeviceDataUrl {
 	@Column(nullable = false)
 	private final String modelUrl;
 
+	@SuppressWarnings("unused")
+	private DeviceDataUrl(){
+		// For ORM creation
+		
+		this.modelUrl = null;
+	}
+	
 	public DeviceDataUrl(String modelUrl) {
 		this.modelUrl = modelUrl;
 	}
@@ -34,7 +41,6 @@ public class DeviceDataUrl {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((modelUrl == null) ? 0 : modelUrl.hashCode());
 		return result;
 	}
@@ -48,11 +54,6 @@ public class DeviceDataUrl {
 		if (getClass() != obj.getClass())
 			return false;
 		DeviceDataUrl other = (DeviceDataUrl) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
 		if (modelUrl == null) {
 			if (other.modelUrl != null)
 				return false;
