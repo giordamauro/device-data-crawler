@@ -29,9 +29,9 @@ public class JpaDeviceDataRepository implements ItemWriter<DeviceModel> {
 		deviceDataItems.forEach(deviceModel -> {
 			
 			try {
-				storeDeviceData(deviceModel);
+				DeviceModel persistedModel = storeDeviceData(deviceModel);
 				
-				LOGGER.info("Successfully stored " + deviceModel);
+				LOGGER.info("Successfully stored " + persistedModel);
 			}
 			catch(Exception e){
 				
@@ -40,7 +40,7 @@ public class JpaDeviceDataRepository implements ItemWriter<DeviceModel> {
 		});
 	}
 	
-	private void storeDeviceData(DeviceModel model) {
+	private DeviceModel storeDeviceData(DeviceModel model) {
 
 		DeviceModel deviceModel = deviceModelRepository.findOneByBrandAndModelAndModelAlias(model.getBrand(), model.getModel(), model.getModelAlias().orElse(null))
 		        .map(existingDevice -> {
@@ -53,6 +53,6 @@ public class JpaDeviceDataRepository implements ItemWriter<DeviceModel> {
 		Optional.ofNullable(model.getFeatures())
 			.ifPresent(modelFeatures -> deviceModel.addFeatures(modelFeatures));
 					
-		deviceModelRepository.save(deviceModel);
+		return deviceModelRepository.save(deviceModel);
 	}
 }

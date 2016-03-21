@@ -38,7 +38,7 @@ public class DeviceModel {
     private final Date createdOn;
     
     @Column(nullable = false)
-    private final String createdBy;
+    private final String url;
 
     @Column
     private String modelAlias;
@@ -54,20 +54,20 @@ public class DeviceModel {
         this.brand = null;
         this.model = null;
         this.createdOn = null;
-        this.createdBy = null;
+        this.url = null;
     }
 
     private DeviceModel(Builder builder) {
 
         Objects.requireNonNull(builder.brand, "Brand cannot be null");
         Objects.requireNonNull(builder.model, "Model cannot be null");
-        Objects.requireNonNull(builder.createdBy, "CreatedBy cannot be null");
+        Objects.requireNonNull(builder.url, "Url cannot be null");
         
         this.createdOn = new Date();
         
         this.brand = builder.brand;
         this.model = builder.model;
-        this.createdBy = builder.createdBy;
+        this.url = builder.url;
         this.modelAlias = builder.modelAlias;
     }
 
@@ -110,8 +110,8 @@ public class DeviceModel {
 		return createdOn;
 	}
 
-	public String getCreatedBy() {
-		return createdBy;
+	public String getUrl() {
+		return url;
 	}
 
 	@Override
@@ -119,9 +119,7 @@ public class DeviceModel {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((brand == null) ? 0 : brand.hashCode());
-		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
-		result = prime * result + ((createdOn == null) ? 0 : createdOn.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		result = prime * result + ((model == null) ? 0 : model.hashCode());
 		result = prime * result + ((modelAlias == null) ? 0 : modelAlias.hashCode());
 		return result;
@@ -141,20 +139,10 @@ public class DeviceModel {
 				return false;
 		} else if (!brand.equals(other.brand))
 			return false;
-		if (createdBy == null) {
-			if (other.createdBy != null)
+		if (url == null) {
+			if (other.url != null)
 				return false;
-		} else if (!createdBy.equals(other.createdBy))
-			return false;
-		if (createdOn == null) {
-			if (other.createdOn != null)
-				return false;
-		} else if (!createdOn.equals(other.createdOn))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
+		} else if (!url.equals(other.url))
 			return false;
 		if (model == null) {
 			if (other.model != null)
@@ -172,14 +160,14 @@ public class DeviceModel {
 	@Override
 	public String toString() {
 		return "DeviceModel [id=" + id + ", brand=" + brand + ", model=" + model + ", createdOn=" + createdOn
-				+ ", createdBy=" + createdBy + ", modelAlias=" + modelAlias + ", features=" + features + "]";
+				+ ", url=" + url + ", modelAlias=" + modelAlias + ", features=" + features + "]";
 	}
 
 	public static class Builder {
     	
     	private String brand;
         private String model;
-        private String createdBy;
+        private String url;
         private String modelAlias;
 
 		public Builder setBrand(String brand) {
@@ -198,10 +186,10 @@ public class DeviceModel {
 			return this;
 		}
 
-		public Builder setCreatedBy(String createdBy) {
+		public Builder setUrl(String url) {
 			
-			Objects.requireNonNull(createdBy);
-			this.createdBy = createdBy;
+			Objects.requireNonNull(url);
+			this.url = url;
 			
 			return this;
 		}

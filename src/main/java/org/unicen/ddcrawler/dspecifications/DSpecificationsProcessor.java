@@ -29,7 +29,7 @@ public class DSpecificationsProcessor implements ItemProcessor<DeviceDataUrl, De
 
 	private static final String RECENT_COMPARISONS_CATEGORY = "Most recent comparisons";
 	private static final String PRICES_CATEGORY = "Prices of";
-
+	private static final String LAST_VIEWED_CATEGORY = "Last viewed devices";
 
 	@Autowired
 	private ModelDataWebCrawler modelDataWebCrawler;
@@ -47,7 +47,7 @@ public class DSpecificationsProcessor implements ItemProcessor<DeviceDataUrl, De
         Set<SpecificationFeature> modifiableFeaturesSet = new HashSet<>(specificationFeatures);
         modifiableFeaturesSet.remove(modelFeature);
 
-        DeviceModel model = mapFeatureToDeviceModel(modelFeature);
+        DeviceModel model = mapFeatureToDeviceModel(modelFeature, modelUrl.getModelUrl());
         Set<DeviceFeature> features = mapSpecificationsToDeviceFeatures(modifiableFeaturesSet);
         
         model.addFeatures(features);
@@ -95,7 +95,7 @@ public class DSpecificationsProcessor implements ItemProcessor<DeviceDataUrl, De
 		return modelFeature;
 	}
 	
-	private DeviceModel mapFeatureToDeviceModel(SpecificationFeature modelFeature) {
+	private DeviceModel mapFeatureToDeviceModel(SpecificationFeature modelFeature, String url) {
 		
 		Map<String, String> attributes = modelFeature.getAttributes();
 		
@@ -103,7 +103,7 @@ public class DSpecificationsProcessor implements ItemProcessor<DeviceDataUrl, De
 				.setBrand(attributes.get(BRAND_ATTRIBUTE))
 				.setModel(attributes.get(MODEL_ATTRIBUTE))
 				.setModelAlias(attributes.get(MODEL_ALIAS_ATTRIBUTE))
-				.setCreatedBy(createdByVersion)
+				.setUrl(url)
 				.build();
 
 		return deviceModel;
@@ -116,7 +116,7 @@ public class DSpecificationsProcessor implements ItemProcessor<DeviceDataUrl, De
 		specificationFeatures.forEach(specFeature -> {
 
 			String category = specFeature.getFeatureName();
-			if(!category.startsWith(RECENT_COMPARISONS_CATEGORY) && !category.startsWith(PRICES_CATEGORY)){
+			if(!category.startsWith(RECENT_COMPARISONS_CATEGORY) && !category.startsWith(PRICES_CATEGORY) && !category.startsWith(LAST_VIEWED_CATEGORY)){
 	
 				specFeature.getAttributes().forEach( (name, value) -> {
 				

@@ -32,7 +32,7 @@ public class BenchmarkWebCrawler implements BulkWebCrawler<BenchmarkFeature>{
 
 			String brandAndModelSplit[] = brandAndModel.split(" ");
 			String brand = brandAndModelSplit[0];
-			String model = brandAndModel.replaceFirst(brand, "");
+			String model = brandAndModel.replaceFirst(brand + " ", "");
 
 			Element tableData = modelElement.parent().nextElementSibling();
 			Element valueDiv = tableData.select("div").get(0);

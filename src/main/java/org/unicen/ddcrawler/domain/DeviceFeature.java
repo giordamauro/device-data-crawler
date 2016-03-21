@@ -103,9 +103,7 @@ public class DeviceFeature {
 		int result = 1;
 		result = prime * result + ((category == null) ? 0 : category.hashCode());
 		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
-		result = prime * result + ((createdOn == null) ? 0 : createdOn.hashCode());
 		result = prime * result + ((device == null) ? 0 : device.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
@@ -130,20 +128,10 @@ public class DeviceFeature {
 				return false;
 		} else if (!createdBy.equals(other.createdBy))
 			return false;
-		if (createdOn == null) {
-			if (other.createdOn != null)
-				return false;
-		} else if (!createdOn.equals(other.createdOn))
-			return false;
 		if (device == null) {
 			if (other.device != null)
 				return false;
 		} else if (!device.equals(other.device))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
 			return false;
 		if (name == null) {
 			if (other.name != null)
