@@ -1,4 +1,5 @@
 sqlite> .mode csv
+sqlite> .headers on 
 sqlite> .output {pathToFile.csv}
 
 sqlite>

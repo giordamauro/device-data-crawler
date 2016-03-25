@@ -1,8 +1,11 @@
 package org.unicen.ddcrawler.dspecifications;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,10 +15,11 @@ import org.springframework.stereotype.Component;
 import org.unicen.ddcrawler.domain.DeviceDataUrl;
 import org.unicen.ddcrawler.domain.DeviceFeature;
 import org.unicen.ddcrawler.domain.DeviceModel;
+import org.unicen.ddcrawler.domain.ModelDeviceNormalizer;
 import org.unicen.ddcrawler.dspecifications.domain.SpecificationFeature;
 
 @Component
-public class DSpecificationsProcessor implements ItemProcessor<DeviceDataUrl, DeviceModel> {
+public class DSpecificationsProcessor implements ItemProcessor<DeviceDataUrl, Set<DeviceModel>> {
 
     private static final Log LOGGER = LogFactory.getLog(DSpecificationsProcessor.class);
     
@@ -34,10 +38,13 @@ public class DSpecificationsProcessor implements ItemProcessor<DeviceDataUrl, De
 	@Autowired
 	private ModelDataWebCrawler modelDataWebCrawler;
 
+	@Autowired
+	private ModelDeviceNormalizer modelDeviceNormalizer;
+	
 	private String createdByVersion = CREATED_BY_DEFAULT_VERSION;
 	
 	@Override
-	public DeviceModel process(DeviceDataUrl modelUrl) throws Exception {
+	public Set<DeviceModel> process(DeviceDataUrl modelUrl) throws Exception {
 	    
 	    LOGGER.info("Start processing DS model url " + modelUrl);
 	    
@@ -47,12 +54,29 @@ public class DSpecificationsProcessor implements ItemProcessor<DeviceDataUrl, De
         Set<SpecificationFeature> modifiableFeaturesSet = new HashSet<>(specificationFeatures);
         modifiableFeaturesSet.remove(modelFeature);
 
-        DeviceModel model = mapFeatureToDeviceModel(modelFeature, modelUrl.getModelUrl());
+        Set<DeviceModel> models = mapFeatureToDeviceModels(modelFeature, modelUrl.getModelUrl());
         Set<DeviceFeature> features = mapSpecificationsToDeviceFeatures(modifiableFeaturesSet);
         
-        model.addFeatures(features);
-        
-        return model;
+        if(models.size() == 1){
+        	DeviceModel model = models.iterator().next();
+        	model.addFeatures(features);
+        }
+        else{
+	        models.forEach(model -> {
+	        	
+	        	Set<DeviceFeature> copyOfFeatures = features.parallelStream()
+	        			.map(feature -> {
+	        				DeviceFeature deviceFeature = new DeviceFeature(feature.getCategory(), feature.getName(), feature.getValue());
+	        				deviceFeature.setCreatedBy(feature.getCreatedBy());
+	        				
+	        				return deviceFeature;
+	        			})
+	        			.collect(Collectors.toSet());
+	        	
+	        	model.addFeatures(copyOfFeatures);
+	        });
+        }
+        return models;
 	}
 	
 	public String getCreatedByVersion() {
@@ -95,18 +119,27 @@ public class DSpecificationsProcessor implements ItemProcessor<DeviceDataUrl, De
 		return modelFeature;
 	}
 	
-	private DeviceModel mapFeatureToDeviceModel(SpecificationFeature modelFeature, String url) {
+	private Set<DeviceModel> mapFeatureToDeviceModels(SpecificationFeature modelFeature, String url) {
 		
-		Map<String, String> attributes = modelFeature.getAttributes();
+		Map<String, List<String>> attributes = modelFeature.getAttributes();
 		
-		DeviceModel deviceModel = new DeviceModel.Builder()
-				.setBrand(attributes.get(BRAND_ATTRIBUTE))
-				.setModel(attributes.get(MODEL_ATTRIBUTE))
-				.setModelAlias(attributes.get(MODEL_ALIAS_ATTRIBUTE))
-				.setUrl(url)
-				.build();
+		final String brand = modelDeviceNormalizer.getNormalizedBrand(attributes.get(BRAND_ATTRIBUTE).get(0));
+		final String modelAttribute = attributes.get(MODEL_ATTRIBUTE).get(0);
 
-		return deviceModel;
+		Set<String> models = new HashSet<>();
+		models.add(modelAttribute);
+				
+		Optional.ofNullable(attributes.get(MODEL_ALIAS_ATTRIBUTE))
+			.ifPresent(modelAlias -> models.addAll(modelAlias));
+
+		return models.parallelStream()
+			.map(alias -> modelDeviceNormalizer.getNormalizedModel(brand, alias))
+			.map(model -> new DeviceModel.Builder()
+					.setBrand(brand)
+					.setModel(model)
+					.setCreatedBy(url)
+					.build())
+			.collect(Collectors.toSet());
 	}
 	
 	private Set<DeviceFeature> mapSpecificationsToDeviceFeatures(Set<SpecificationFeature> specificationFeatures) {
@@ -118,8 +151,9 @@ public class DSpecificationsProcessor implements ItemProcessor<DeviceDataUrl, De
 			String category = specFeature.getFeatureName();
 			if(!category.startsWith(RECENT_COMPARISONS_CATEGORY) && !category.startsWith(PRICES_CATEGORY) && !category.startsWith(LAST_VIEWED_CATEGORY)){
 	
-				specFeature.getAttributes().forEach( (name, value) -> {
+				specFeature.getAttributes().forEach( (name, values) -> {
 				
+					String value = values.stream().collect(Collectors.joining(", "));
 					DeviceFeature feature = new DeviceFeature(specFeature.getFeatureName(), name, value);
 					feature.setCreatedBy(createdByVersion);
 				

@@ -42,7 +42,7 @@ public class JpaDeviceDataRepository implements ItemWriter<DeviceModel> {
 	
 	private DeviceModel storeDeviceData(DeviceModel model) {
 
-		DeviceModel deviceModel = deviceModelRepository.findOneByBrandAndModelAndModelAlias(model.getBrand(), model.getModel(), model.getModelAlias().orElse(null))
+		DeviceModel deviceModel = deviceModelRepository.findOneByBrandAndModel(model.getBrand(), model.getModel())
 		        .map(existingDevice -> {
 		            
 		            LOGGER.info(String.format("Found existing device %s matching with %s", existingDevice, model));

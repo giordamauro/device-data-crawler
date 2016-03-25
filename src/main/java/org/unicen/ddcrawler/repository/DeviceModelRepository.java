@@ -10,5 +10,5 @@ import org.unicen.ddcrawler.domain.DeviceModel;
 @Repository
 public interface DeviceModelRepository extends CrudRepository<DeviceModel, UUID> {
 
-	Optional<DeviceModel> findOneByBrandAndModelAndModelAlias(String brand, String model, String modelAlias);
+	Optional<DeviceModel> findOneByBrandAndModel(String brand, String model);
 }

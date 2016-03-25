@@ -22,13 +22,13 @@ public class Application {
 //		processDSSingleUrl(appContext);
 		
 //		Process 1 Android Benchmarks URL manually: 
-		processBenchmarkSingleUrl(appContext);
+//		processBenchmarkSingleUrl(appContext);
 	}
 	
 	@SuppressWarnings("unused")
 	private static void processDSSingleUrl(ApplicationContext appContext) throws Exception{
 
-		final String modelUrl = "http://www.devicespecifications.com/en/model/2b273693";
+		final String modelUrl = "http://www.devicespecifications.com/en/model/f1f235cb";
 		
 		DSSingleUrlProcessor singleUrlProcessor = appContext.getBean(DSSingleUrlProcessor.class);
 		singleUrlProcessor.processDeviceDataUrl(modelUrl);

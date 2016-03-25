@@ -38,10 +38,10 @@ public class DeviceModel {
     private final Date createdOn;
     
     @Column(nullable = false)
-    private final String url;
+    private final String createdBy;
 
     @Column
-    private String modelAlias;
+    private String name;
 
     @JoinColumn
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -54,25 +54,25 @@ public class DeviceModel {
         this.brand = null;
         this.model = null;
         this.createdOn = null;
-        this.url = null;
+        this.createdBy = null;
     }
 
     private DeviceModel(Builder builder) {
 
         Objects.requireNonNull(builder.brand, "Brand cannot be null");
         Objects.requireNonNull(builder.model, "Model cannot be null");
-        Objects.requireNonNull(builder.url, "Url cannot be null");
+        Objects.requireNonNull(builder.createdBy, "CreatedBy cannot be null");
         
         this.createdOn = new Date();
         
         this.brand = builder.brand;
         this.model = builder.model;
-        this.url = builder.url;
-        this.modelAlias = builder.modelAlias;
+        this.createdBy = builder.createdBy;
+        this.name = builder.name;
     }
 
-    public void setModelAlias(String modelAlias) {
-        this.modelAlias = modelAlias;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void addFeatures(Set<DeviceFeature> features) {
@@ -102,16 +102,16 @@ public class DeviceModel {
         return model;
     }
     
-    public Optional<String> getModelAlias() {
-        return Optional.ofNullable(modelAlias);
+    public Optional<String> getName() {
+        return Optional.ofNullable(name);
     }
         
 	public Date getCreatedOn() {
 		return createdOn;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getCreatedBy() {
+		return createdBy;
 	}
 
 	@Override
@@ -119,9 +119,9 @@ public class DeviceModel {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((brand == null) ? 0 : brand.hashCode());
-		result = prime * result + ((url == null) ? 0 : url.hashCode());
+		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
 		result = prime * result + ((model == null) ? 0 : model.hashCode());
-		result = prime * result + ((modelAlias == null) ? 0 : modelAlias.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
@@ -139,20 +139,20 @@ public class DeviceModel {
 				return false;
 		} else if (!brand.equals(other.brand))
 			return false;
-		if (url == null) {
-			if (other.url != null)
+		if (createdBy == null) {
+			if (other.createdBy != null)
 				return false;
-		} else if (!url.equals(other.url))
+		} else if (!createdBy.equals(other.createdBy))
 			return false;
 		if (model == null) {
 			if (other.model != null)
 				return false;
 		} else if (!model.equals(other.model))
 			return false;
-		if (modelAlias == null) {
-			if (other.modelAlias != null)
+		if (name == null) {
+			if (other.name != null)
 				return false;
-		} else if (!modelAlias.equals(other.modelAlias))
+		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}
@@ -160,15 +160,15 @@ public class DeviceModel {
 	@Override
 	public String toString() {
 		return "DeviceModel [id=" + id + ", brand=" + brand + ", model=" + model + ", createdOn=" + createdOn
-				+ ", url=" + url + ", modelAlias=" + modelAlias + ", features=" + features + "]";
+				+ ", createdBy=" + createdBy + ", name=" + name + ", features=" + features + "]";
 	}
 
 	public static class Builder {
     	
     	private String brand;
         private String model;
-        private String url;
-        private String modelAlias;
+        private String createdBy;
+        private String name;
 
 		public Builder setBrand(String brand) {
 			
@@ -186,16 +186,16 @@ public class DeviceModel {
 			return this;
 		}
 
-		public Builder setUrl(String url) {
+		public Builder setCreatedBy(String createdBy) {
 			
-			Objects.requireNonNull(url);
-			this.url = url;
+			Objects.requireNonNull(createdBy);
+			this.createdBy = createdBy;
 			
 			return this;
 		}
 
-		public Builder setModelAlias(String modelAlias) {
-			this.modelAlias = modelAlias;
+		public Builder setName(String name) {
+			this.name = name;
 			
 			return this;
 		}

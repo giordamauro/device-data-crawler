@@ -1,5 +1,6 @@
 package org.unicen.ddcrawler.dspecifications;
 
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,8 +34,11 @@ public class ModelDataWebCrawler implements WebCrawler<Set<SpecificationFeature>
                     Element value = tData.get(1);
                     
                     attribute.select("p").remove();
+                    value.select("span").remove();
                     
-                    deviceFeature.setAttribute(attribute.text(), value.text());
+                    String[] values = value.html().split("<br>");
+                    
+                    deviceFeature.setAttribute(attribute.text(), Arrays.asList(values));
                 });
                 
                 return deviceFeature;

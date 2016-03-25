@@ -35,7 +35,7 @@ public class BenchmarkFeaturesProcessor implements ItemProcessor<BenchmarkUrl, S
             		DeviceModel model = new DeviceModel.Builder()
                             .setBrand(benchmarkFeature.getBrand())
                             .setModel(benchmarkFeature.getModel())
-                            .setUrl(benchmarkUrl.getUrl())
+                            .setCreatedBy(benchmarkUrl.getUrl())
                             .build();
             		
             		DeviceFeature feature =  new DeviceFeature(BENCHMARK_CATEGORY, benchmarkFeature.getFeatureName(), benchmarkFeature.getBenchmarkValue());

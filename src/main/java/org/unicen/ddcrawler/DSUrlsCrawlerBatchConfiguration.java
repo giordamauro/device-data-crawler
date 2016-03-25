@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.unicen.ddcrawler.domain.DeviceDataUrl;
 import org.unicen.ddcrawler.dspecifications.DSpecificationsWebUrlReader;
-import org.unicen.ddcrawler.writer.JpaDeviceUrlRepository;
+import org.unicen.ddcrawler.repository.JpaDeviceUrlRepository;
 
 
 //@Configuration

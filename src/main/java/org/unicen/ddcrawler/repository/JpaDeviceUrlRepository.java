@@ -1,4 +1,4 @@
-package org.unicen.ddcrawler.writer;
+package org.unicen.ddcrawler.repository;
 
 import java.util.List;
 
@@ -8,7 +8,6 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.unicen.ddcrawler.domain.DeviceDataUrl;
-import org.unicen.ddcrawler.repository.DeviceDataUrlRepository;
 
 @Component
 public class JpaDeviceUrlRepository implements ItemWriter<DeviceDataUrl> {

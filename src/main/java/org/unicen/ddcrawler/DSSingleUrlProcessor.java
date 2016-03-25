@@ -3,13 +3,14 @@ package org.unicen.ddcrawler;
 
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.unicen.ddcrawler.domain.DeviceDataUrl;
 import org.unicen.ddcrawler.domain.DeviceModel;
 import org.unicen.ddcrawler.dspecifications.DSpecificationsProcessor;
-import org.unicen.ddcrawler.writer.JpaDeviceDataRepository;
+import org.unicen.ddcrawler.writer.SetJpaDeviceDataRepository;
 
 @Configuration
 public class DSSingleUrlProcessor {
@@ -18,14 +19,14 @@ public class DSSingleUrlProcessor {
 	private DSpecificationsProcessor specificationsDataProcessor;
 
     @Autowired
-	private JpaDeviceDataRepository jpaDeviceDataRepository;
+	private SetJpaDeviceDataRepository jpaDeviceDataRepository;
 
     public void processDeviceDataUrl(String modelUrl) throws Exception {
     
     	Objects.requireNonNull(modelUrl, "Url cannot be null");
     	
     	DeviceDataUrl deviceDataUrl = new DeviceDataUrl(modelUrl);
-		DeviceModel processedModel = specificationsDataProcessor.process(deviceDataUrl);
+		Set<DeviceModel> processedModel = specificationsDataProcessor.process(deviceDataUrl);
     
 		jpaDeviceDataRepository.write(Collections.singletonList(processedModel));
     }
