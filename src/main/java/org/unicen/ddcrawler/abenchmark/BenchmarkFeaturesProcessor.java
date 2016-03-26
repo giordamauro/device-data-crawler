@@ -1,15 +1,17 @@
 package org.unicen.ddcrawler.abenchmark;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.unicen.ddcrawler.domain.DeviceFeature;
 import org.unicen.ddcrawler.domain.DeviceModel;
+import org.unicen.ddcrawler.domain.ModelDeviceNormalizer;
 
 @Component
 public class BenchmarkFeaturesProcessor implements ItemProcessor<BenchmarkUrl, Set<DeviceModel>> {
@@ -21,6 +23,9 @@ public class BenchmarkFeaturesProcessor implements ItemProcessor<BenchmarkUrl, S
 
 	private static final String BENCHMARK_CATEGORY = "Benchmarks";
 
+	@Autowired
+	private ModelDeviceNormalizer modelDeviceNormalizer;
+	
 	private String createdByVersion = CREATED_BY_DEFAULT_VERSION;
 	
 	@Override
@@ -29,22 +34,30 @@ public class BenchmarkFeaturesProcessor implements ItemProcessor<BenchmarkUrl, S
 	    BenchmarkWebCrawler benchmarkWebCrawler = new BenchmarkWebCrawler(benchmarkUrl.getFeatureName());
 	    Set<BenchmarkFeature> benchmarkFeatures = getBenchmarkFeatures(benchmarkWebCrawler, benchmarkUrl.getUrl());
 
-	    return benchmarkFeatures.parallelStream()
-	            .map(benchmarkFeature -> {
+	    Set<DeviceModel> deviceModels = new HashSet<>();
+	    benchmarkFeatures.forEach(benchmarkFeature -> {
 	    
-            		DeviceModel model = new DeviceModel.Builder()
-                            .setBrand(benchmarkFeature.getBrand())
-                            .setModel(benchmarkFeature.getModel())
-                            .setCreatedBy(benchmarkUrl.getUrl())
-                            .build();
+	    	Set<String> models = benchmarkFeature.getModels();
+	    	models.forEach(model -> {
+	    	
+	    		String normalizedBrand = modelDeviceNormalizer.getNormalizedBrand(benchmarkFeature.getBrand());
+	    		String normalizedModel = modelDeviceNormalizer.getNormalizedModel(normalizedBrand, model);
+	    		
+	    		DeviceModel deviceModel = new DeviceModel.Builder()
+	    				.setBrand(normalizedBrand)
+                        .setModel(normalizedModel)
+                        .setCreatedBy(benchmarkUrl.getUrl())
+                        .build();
             		
-            		DeviceFeature feature =  new DeviceFeature(BENCHMARK_CATEGORY, benchmarkFeature.getFeatureName(), benchmarkFeature.getBenchmarkValue());
-            		feature.setCreatedBy(createdByVersion);
-            		model.addFeatures(Collections.singleton(feature));
-            		
-            		return model;
-	            })
-	            .collect(Collectors.toSet());
+            	DeviceFeature feature =  new DeviceFeature(BENCHMARK_CATEGORY, benchmarkFeature.getFeatureName(), benchmarkFeature.getBenchmarkValue());
+            	feature.setCreatedBy(createdByVersion);
+            	deviceModel.addFeatures(Collections.singleton(feature));
+            	
+            	deviceModels.add(deviceModel);
+	    	});
+        });
+	    
+	    return deviceModels;
 	}
 	
 	public String getCreatedByVersion() {

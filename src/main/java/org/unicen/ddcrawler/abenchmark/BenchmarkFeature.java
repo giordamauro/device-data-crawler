@@ -1,25 +1,26 @@
 package org.unicen.ddcrawler.abenchmark;
 
 import java.util.Objects;
+import java.util.Set;
 
 public class BenchmarkFeature {
 
     private final String featureName;
     
     private final String brand;
-    private final String model;
+    private final Set<String> models;
     private final String benchmarkValue;
     
     private BenchmarkFeature(Builder builder) {
         
         Objects.requireNonNull(builder.featureName, "FeatureName cannot be null");
         Objects.requireNonNull(builder.brand, "Brand cannot be null");
-        Objects.requireNonNull(builder.model, "Model cannot be null");
+        Objects.requireNonNull(builder.models, "Models cannot be null");
         Objects.requireNonNull(builder.benchmarkValue, "BenchmarkValue cannot be null");
         
         this.featureName = builder.featureName;
         this.brand = builder.brand;
-        this.model = builder.model;
+        this.models = builder.models;
         this.benchmarkValue = builder.benchmarkValue;
     }
 
@@ -31,8 +32,8 @@ public class BenchmarkFeature {
         return brand;
     }
 
-    public String getModel() {
-        return model;
+    public Set<String> getModels() {
+        return models;
     }
 
     public String getBenchmarkValue() {
@@ -41,7 +42,7 @@ public class BenchmarkFeature {
 
     @Override
     public String toString() {
-        return "BenchmarkFeature [featureName=" + featureName + ", brand=" + brand + ", model=" + model + ", benchmarkValue=" + benchmarkValue + "]";
+        return "BenchmarkFeature [featureName=" + featureName + ", brand=" + brand + ", models=" + models + ", benchmarkValue=" + benchmarkValue + "]";
     }
 
     public static class Builder {
@@ -49,7 +50,7 @@ public class BenchmarkFeature {
         private final String featureName;
         
         private String brand;
-        private String model;
+        private Set<String> models;
         private String benchmarkValue;
         
         
@@ -70,10 +71,10 @@ public class BenchmarkFeature {
         }
 
 
-        public Builder setModel(String model) {
+        public Builder setModels(Set<String> models) {
             
-            Objects.requireNonNull(model, "Model cannot be null");
-            this.model = model;
+            Objects.requireNonNull(models, "Models cannot be null");
+            this.models = models;
             
             return this;
         }

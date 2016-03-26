@@ -22,7 +22,7 @@ public class Application {
 //		processDSSingleUrl(appContext);
 		
 //		Process 1 Android Benchmarks URL manually: 
-//		processBenchmarkSingleUrl(appContext);
+		processBenchmarkSingleUrl(appContext);
 	}
 	
 	@SuppressWarnings("unused")
@@ -37,8 +37,8 @@ public class Application {
 	@SuppressWarnings("unused")
 	private static void processBenchmarkSingleUrl(ApplicationContext appContext) throws Exception{
 
-		final String featureName = "3DGraphicsRating";
-		final String modelUrl = "http://www.androidbenchmark.net/g3dmark_chart.html";
+		final String featureName = "MemoryMark";
+		final String modelUrl = "http://www.androidbenchmark.net/memmark_chart.html";
 		
 		BenchmarkSingleUrlProcessor singleUrlProcessor = appContext.getBean(BenchmarkSingleUrlProcessor.class);
 		singleUrlProcessor.processDeviceDataUrl(featureName, modelUrl);
