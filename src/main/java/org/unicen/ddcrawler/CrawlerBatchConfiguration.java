@@ -25,7 +25,7 @@ import org.unicen.ddcrawler.domain.DeviceDataUrl;
 import org.unicen.ddcrawler.domain.DeviceModel;
 import org.unicen.ddcrawler.dspecifications.DSpecificationsModelUrlReader;
 import org.unicen.ddcrawler.dspecifications.DSpecificationsProcessor;
-import org.unicen.ddcrawler.writer.SetJpaDeviceDataRepository;
+import org.unicen.ddcrawler.writer.SetJpaDeviceDataWriter;
 
 //@EnableBatchProcessing
 //@Configuration
@@ -53,7 +53,7 @@ public class CrawlerBatchConfiguration {
     
     
     @Autowired
-	private SetJpaDeviceDataRepository jpaDeviceDataRepository;
+	private SetJpaDeviceDataWriter jpaDeviceDataRepository;
 
     @Bean
     public Step storeModelSpecificationsStep() {

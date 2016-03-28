@@ -21,18 +21,20 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.UrlResource;
 import org.unicen.ddcrawler.domain.DeviceModel;
 import org.unicen.ddcrawler.gsupport.AndroidDevice;
 import org.unicen.ddcrawler.gsupport.GSupportedDevicesProcessor;
-import org.unicen.ddcrawler.writer.JpaDeviceDataRepository;
+import org.unicen.ddcrawler.writer.JpaDeviceDataWriter;
 
 //@EnableBatchProcessing
 //@Configuration
 public class GoogleSupportedBatchConfiguration {
 
-	private static final String GOOGLE_SUPPORTED_DEVICES = "http://storage.googleapis.com/play_public/supported_devices.csv";
+	@Value("${google.supportedDevices.csv}")
+	private String googleSupportedDevicesCsv;
 	
     @Autowired
     public JobBuilderFactory jobBuilderFactory;
@@ -45,12 +47,12 @@ public class GoogleSupportedBatchConfiguration {
 	private GSupportedDevicesProcessor gSupportedDevicesProcessor;    
     
     @Autowired
-	private JpaDeviceDataRepository jpaDeviceDataRepository;
+	private JpaDeviceDataWriter jpaDeviceDataRepository;
 
     @Bean
     public FlatFileItemReader<AndroidDevice> reader() throws MalformedURLException {
         FlatFileItemReader<AndroidDevice> reader = new FlatFileItemReader<AndroidDevice>();
-        reader.setResource(new UrlResource(GOOGLE_SUPPORTED_DEVICES));
+        reader.setResource(new UrlResource(googleSupportedDevicesCsv));
         reader.setEncoding("UTF-16");
         reader.setLinesToSkip(1);
         reader.setLineMapper(new DefaultLineMapper<AndroidDevice>() {{

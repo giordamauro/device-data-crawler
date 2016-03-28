@@ -12,10 +12,16 @@ benchmarks:
     2DGraphicsMark: http://www.androidbenchmark.net/g2dmark_chart.html
     3DGraphicsMark: http://www.androidbenchmark.net/g3dmark_chart.html
 
+google:
+  supportedDevices:
+    csv: http://storage.googleapis.com/play_public/supported_devices.csv
+
 deviceProcess:
   nextId: 1
 
-
+firebase:
+  baseUrl: https://device-data-store.firebaseio.com
+  
 #Spring properties
 
 spring:

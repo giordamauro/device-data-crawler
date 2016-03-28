@@ -39,13 +39,17 @@ public class DeviceModel {
     
     @Column(nullable = false)
     private final String createdBy;
+    
+
+    @Column(nullable = false)
+    private int featuresCount;
 
     @Column
     private String name;
 
     @JoinColumn
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<DeviceFeature> features;    
+    private Set<DeviceFeature> features = new HashSet<>();    
     
     private DeviceModel() {
         // ORM initialization
@@ -78,18 +82,15 @@ public class DeviceModel {
     public void addFeatures(Set<DeviceFeature> features) {
     	
     	features.forEach(feature -> feature.setModel(this));
-		
-    	if(this.features == null){
-			this.features = new HashSet<>();
-		}
-    	
+
     	this.features.addAll(features);
+    	this.featuresCount = features.size();
 	}
     
 	public Integer getId() {
 		return id;
 	}
-
+	
 	public Set<DeviceFeature> getFeatures() {
 		return features;
 	}

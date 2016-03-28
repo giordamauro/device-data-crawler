@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 import org.unicen.ddcrawler.domain.DeviceModel;
 
 @Component
-public class SetJpaDeviceDataRepository implements ItemWriter<Set<DeviceModel>> {
+public class SetJpaDeviceDataWriter implements ItemWriter<Set<DeviceModel>> {
 
-    private final JpaDeviceDataRepository jpaDeviceDataRepository;
+    private final JpaDeviceDataWriter jpaDeviceDataRepository;
 
     @Autowired
-    public SetJpaDeviceDataRepository(JpaDeviceDataRepository jpaDeviceDataRepository) {
+    public SetJpaDeviceDataWriter(JpaDeviceDataWriter jpaDeviceDataRepository) {
         this.jpaDeviceDataRepository = jpaDeviceDataRepository;
     }
 

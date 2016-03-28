@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.unicen.ddcrawler.abenchmark.BenchmarkFeaturesProcessor;
 import org.unicen.ddcrawler.abenchmark.BenchmarkUrl;
 import org.unicen.ddcrawler.domain.DeviceModel;
-import org.unicen.ddcrawler.writer.JpaDeviceDataRepository;
+import org.unicen.ddcrawler.writer.JpaDeviceDataWriter;
 
 @Configuration
 public class BenchmarkSingleUrlProcessor {
@@ -19,7 +19,7 @@ public class BenchmarkSingleUrlProcessor {
 	private BenchmarkFeaturesProcessor benchmarkFeaturesProcessor;
 
     @Autowired
-	private JpaDeviceDataRepository jpaDeviceDataRepository;
+	private JpaDeviceDataWriter jpaDeviceDataRepository;
 
     public void processDeviceDataUrl(String featureName, String modelUrl) throws Exception {
     

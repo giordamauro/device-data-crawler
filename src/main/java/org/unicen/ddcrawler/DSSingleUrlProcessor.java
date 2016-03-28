@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.unicen.ddcrawler.domain.DeviceDataUrl;
 import org.unicen.ddcrawler.domain.DeviceModel;
 import org.unicen.ddcrawler.dspecifications.DSpecificationsProcessor;
-import org.unicen.ddcrawler.writer.SetJpaDeviceDataRepository;
+import org.unicen.ddcrawler.writer.SetJpaDeviceDataWriter;
 
 @Configuration
 public class DSSingleUrlProcessor {
@@ -19,7 +19,7 @@ public class DSSingleUrlProcessor {
 	private DSpecificationsProcessor specificationsDataProcessor;
 
     @Autowired
-	private SetJpaDeviceDataRepository jpaDeviceDataRepository;
+	private SetJpaDeviceDataWriter jpaDeviceDataRepository;
 
     public void processDeviceDataUrl(String modelUrl) throws Exception {
     

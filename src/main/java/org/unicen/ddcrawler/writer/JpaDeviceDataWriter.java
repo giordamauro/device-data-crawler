@@ -12,14 +12,14 @@ import org.unicen.ddcrawler.domain.DeviceModel;
 import org.unicen.ddcrawler.repository.DeviceModelRepository;
 
 @Component
-public class JpaDeviceDataRepository implements ItemWriter<DeviceModel> {
+public class JpaDeviceDataWriter implements ItemWriter<DeviceModel> {
 
-	private static final Log LOGGER = LogFactory.getLog(JpaDeviceDataRepository.class);
+	private static final Log LOGGER = LogFactory.getLog(JpaDeviceDataWriter.class);
 	
 	private final DeviceModelRepository deviceModelRepository;
 	
 	@Autowired
-	public JpaDeviceDataRepository(DeviceModelRepository deviceModelRepository) {
+	public JpaDeviceDataWriter(DeviceModelRepository deviceModelRepository) {
 		this.deviceModelRepository = deviceModelRepository;
 	}	
 
