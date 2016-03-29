@@ -77,10 +77,8 @@ public class SQLiteDialect extends Dialect {
     }
 
     protected String getLimitString(String query, boolean hasOffset) {
-        return new StringBuffer(query.length()+20).
-                append(query).
-                append(hasOffset ? " limit ? offset ?" : " limit ?").
-                toString();
+        
+    	return query+= (hasOffset) ? " limit ? offset ?" : " limit ?";        
     }
 
     public boolean supportsTemporaryTables() {
